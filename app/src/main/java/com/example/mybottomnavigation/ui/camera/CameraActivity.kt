@@ -1,5 +1,9 @@
 package com.example.mybottomnavigation.ui.camera
 
+import com.example.mybottomnavigation.reduceFileImage
+import com.example.mybottomnavigation.rotateFile
+import com.example.mybottomnavigation.createFile
+
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -63,12 +67,25 @@ class CameraActivity : AppCompatActivity() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    val intent = Intent()
+                    /*val intent = Intent()
                     intent.putExtra("file", photoFile)
                     intent.putExtra(
                         "isBackCamera",
                         cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
                     )
+                    setResult(UploadActivity.CAMERA_X_RESULT, intent)
+                    finish()*/
+
+                     // Rotasi gambar jika perlu
+                    val isBackCamera = cameraSelector == CameraSelector.DEFAULT_BACK_CAMERA
+                    rotateFile(photoFile, isBackCamera)
+
+                    // Kompres gambar
+                    val reducedFile = reduceFileImage(photoFile)
+
+                    val intent = Intent()
+                    intent.putExtra("file", reducedFile)
+                    intent.putExtra("isBackCamera", isBackCamera)
                     setResult(UploadActivity.CAMERA_X_RESULT, intent)
                     finish()
                 }
