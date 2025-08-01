@@ -49,6 +49,8 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.converter.gson)
     implementation(libs.retrofit2.retrofit)
+    implementation(libs.barcode.scanning)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
