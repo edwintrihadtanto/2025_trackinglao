@@ -13,6 +13,7 @@ import com.example.mybottomnavigation.databinding.ActivityMainBinding
 import com.example.mybottomnavigation.ui.camera.CameraActivity
 import com.example.mybottomnavigation.ui.login.LoginActivity
 import com.example.mybottomnavigation.ui.result.ResultActivity
+import com.example.mybottomnavigation.ui.scan.ScanActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -59,12 +60,25 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.hide()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (requestCode == CAMERA_X_RESULT && resultCode == RESULT_OK) {
+        val hasilScan = data?.getStringExtra("SCAN_RESULT")
+        Toast.makeText(this, "Hasil: $hasilScan", Toast.LENGTH_LONG).show()
+    }
+}
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun setupAction() {
         binding.btnScan.setOnClickListener {
+//            startActivity(Intent(this@MainActivity, ScanActivity::class.java))
+            val intent = Intent(this@MainActivity, ScanActivity::class.java)
+            startActivityForResult(intent, CAMERA_X_RESULT)
+        }
+
+        binding.btnCamera.setOnClickListener {
             startActivity(Intent(this@MainActivity, CameraActivity::class.java))
         }
         binding.btnResi.setOnClickListener {
