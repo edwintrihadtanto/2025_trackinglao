@@ -11,6 +11,7 @@ import android.content.Context
 import android.graphics.*
 import android.os.Build
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
@@ -22,6 +23,12 @@ class ScanOverlayView @JvmOverloads constructor(
     attrs: AttributeSet? = null,
     defStyle: Int = 0
 ) : View(context, attrs, defStyle) {
+    init {
+        isClickable = false
+        isFocusable = false
+        isFocusableInTouchMode = false
+        importantForAccessibility = IMPORTANT_FOR_ACCESSIBILITY_NO
+    }
 
     private val paintDim = Paint().apply {
         color = "#88000000".toColorInt() // semi-transparan
@@ -100,4 +107,11 @@ class ScanOverlayView @JvmOverloads constructor(
             current += step
         }
     }
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return false
+    }
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        return false // jangan intercept
+    }
+
 }

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.mybottomnavigation.R
 import com.example.mybottomnavigation.databinding.ActivityMainBinding
 import com.example.mybottomnavigation.ui.camera.CameraActivity
 import com.example.mybottomnavigation.ui.login.LoginActivity
@@ -76,13 +77,16 @@ class MainActivity : AppCompatActivity() {
 //            startActivity(Intent(this@MainActivity, ScanActivity::class.java))
             val intent = Intent(this@MainActivity, ScanActivity::class.java)
             startActivityForResult(intent, CAMERA_X_RESULT)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
         binding.btnCamera.setOnClickListener {
             startActivity(Intent(this@MainActivity, CameraActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
         binding.btnResi.setOnClickListener {
             startActivity(Intent(this@MainActivity, ResultActivity::class.java))
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
         binding.btnLogout.setOnClickListener {
             val sharedPref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE)

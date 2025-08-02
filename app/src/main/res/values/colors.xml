@@ -18,4 +18,5 @@
         <color name="navy_text">#24243F</color>
         <color name="orange_bg_button">#00B0FF</color>
         <color name="back_splash">#C400B0FF</color>
-    </resources>
+        <color name="darkred" >#6F0101</color>
+</resources>

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
+import androidx.camera.core.Camera
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
@@ -30,6 +31,8 @@ class ScanActivity : AppCompatActivity() {
     private var mediaPlayer: MediaPlayer? = null
     private var lastScannedValue: String? = null
     private var alreadyRedirected = false
+    private var isFlashOn = false
+    private var camera: Camera? = null
 
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -63,7 +66,16 @@ class ScanActivity : AppCompatActivity() {
             }
         }
 
-
+        // Toggle flashlight
+        binding.btnFlashlight.setOnClickListener {
+            camera?.let {
+                isFlashOn = !isFlashOn
+                it.cameraControl.enableTorch(isFlashOn)
+                binding.btnFlashlight.setImageResource(
+                    if (isFlashOn) R.drawable.ic_flash_off else R.drawable.ic_flash_on
+                )
+            }
+        }
     }
 
     private fun startCamera() {
