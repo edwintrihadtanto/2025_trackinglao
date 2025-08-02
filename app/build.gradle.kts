@@ -49,11 +49,14 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.converter.gson)
     implementation(libs.retrofit2.retrofit)
-    implementation(libs.barcode.scanning)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.activity)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Tambahkan ini agar Barcode dari MLKit bisa dipakai
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
     // CameraX core library using the camera2 implementation
     val camerax_version = "1.5.0-beta02"
     // The following line is optional, as the core library is included indirectly by camera-camera2
@@ -69,4 +72,6 @@ dependencies {
     implementation("androidx.camera:camera-mlkit-vision:${camerax_version}")
     // If you want to additionally use the CameraX Extensions library
     implementation("androidx.camera:camera-extensions:${camerax_version}")
+
+
 }
