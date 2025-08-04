@@ -15,4 +15,5 @@
     <string name="scan_qr_code_barcode">Scan QR Code / Barcode</string>
     <string name="info_lebih_lanjut">Info lebih lanjut bisa menghubungi\nOperator Layanan Antar Obat\nRSU dr. Soedono Provinsi Jawa Timur</string>
     <string name="judul">Ingin melacak paket obat? \nAyo lacak paket obat disini. </string>
+    <string name="info_main">Tekan salah satu tombol dibawah ini</string>
 </resources>
