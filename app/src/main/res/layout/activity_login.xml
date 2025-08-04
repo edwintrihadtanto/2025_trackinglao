@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,22 +7,9 @@
     android:padding="25dp"
     tools:context=".ui.login.LoginActivity">
 
-    <ImageView
-        android:id="@+id/iv_login"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="136dp"
-        android:contentDescription="@string/todo"
-        app:layout_constraintBottom_toTopOf="@+id/tv_login"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/iv_login" />
-
     <TextView
         android:id="@+id/tv_login"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/login"
         android:textColor="@color/gray_text"
@@ -50,11 +36,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:focusable="true"
             android:hint="@string/medrec"
             android:inputType="number"
-            android:clickable="true"
             tools:ignore="SpeakableTextPresentCheck" />
+
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -73,8 +58,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/tanggal"
-            android:focusable="false"
             android:focusableInTouchMode="false"
+            android:focusable="true"
+            android:clickable="true"
             tools:ignore="SpeakableTextPresentCheck" />
 <!--        app:passwordToggleEnabled="true"-->
     </com.google.android.material.textfield.TextInputLayout>
@@ -95,6 +81,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tanggalEditTextLayout"
         app:layout_constraintVertical_bias="0.108" />
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="211dp"
+        android:layout_height="209dp"
+        android:contentDescription="@string/todo"
+        app:layout_constraintBottom_toTopOf="@+id/tv_login"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/iv_login_tracking" />
 
     <ProgressBar
         android:id="@+id/progressBarLogin"
