@@ -15,6 +15,7 @@ import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import androidx.camera.core.Preview
+import androidx.camera.core.TorchState
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.example.mybottomnavigation.R
@@ -68,12 +69,29 @@ class ScanActivity : AppCompatActivity() {
 
         // Toggle flashlight
         binding.btnFlashlight.setOnClickListener {
-            camera?.let {
-                isFlashOn = !isFlashOn
-                it.cameraControl.enableTorch(isFlashOn)
-                binding.btnFlashlight.setImageResource(
-                    if (isFlashOn) R.drawable.ic_flash_off else R.drawable.ic_flash_on
-                )
+            Log.d("ScanActivity", "Tombol senter diklik.")
+            camera?.let { currentCamera ->
+                if (currentCamera.cameraInfo.hasFlashUnit()) {
+                    isFlashOn = !isFlashOn
+                    currentCamera.cameraControl.enableTorch(isFlashOn)
+                    Log.d("ScanActivity", "Mencoba mengatur lampu ke: $isFlashOn")
+
+                    binding.btnFlashlight.setImageResource(
+                        if (isFlashOn) R.drawable.ic_flash_off else R.drawable.ic_flash_on
+                    )
+
+                    Toast.makeText(
+                        this,
+                        if (isFlashOn) "Lampu Dinyalakan" else "Lampu Dimatikan",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    Log.w("ScanActivity", "Kamera tidak mendukung fitur lampu atau belum siap.")
+                    Toast.makeText(this, "lampu tidak didukung atau belum siap.", Toast.LENGTH_SHORT).show()
+                }
+            } ?: run {
+                Log.e("ScanActivity", "Objek kamera belum diinisialisasi saat tombol lampu diklik.")
+                Toast.makeText(this, "Kamera belum siap. Mohon tunggu.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -85,7 +103,7 @@ class ScanActivity : AppCompatActivity() {
             val cameraProvider = cameraProviderFuture.get()
 
             val preview = Preview.Builder().build().also {
-                it.setSurfaceProvider(binding.previewView.surfaceProvider)
+                it.surfaceProvider = binding.previewView.surfaceProvider
             }
 
             val barcodeAnalyzer = ImageAnalysis.Builder()
@@ -99,12 +117,38 @@ class ScanActivity : AppCompatActivity() {
 
             try {
                 cameraProvider.unbindAll()
-                cameraProvider.bindToLifecycle(
+
+                // Inisialisasi camera dan simpan hasilnya
+                camera = cameraProvider.bindToLifecycle(
                     this,
                     cameraSelector,
                     preview,
                     barcodeAnalyzer
                 )
+
+                camera?.let { cam ->
+                    val cameraInfo = cam.cameraInfo
+                    Log.d("ScanActivity", "Camera berhasil di-bind. Tipe cameraInfo: ${cameraInfo::class.java.name}")
+
+                    if (cameraInfo.hasFlashUnit()) {
+                        Log.d("ScanActivity", "Kamera mendukung senter.")
+
+                        // Sinkronkan ikon tombol flashlight dengan status awal
+                        isFlashOn = cameraInfo.torchState.value == TorchState.ON
+                        binding.btnFlashlight.setImageResource(
+                            if (isFlashOn) R.drawable.ic_flash_off else R.drawable.ic_flash_on
+                        )
+
+                    } else {
+                        Log.w("ScanActivity", "Kamera TIDAK mendukung senter.")
+                        binding.btnFlashlight.isEnabled = false
+                        binding.btnFlashlight.alpha = 0.5f
+                    }
+                } ?: run {
+                    Log.e("ScanActivity", "Kamera gagal di-bind (camera == null).")
+                    binding.btnFlashlight.isEnabled = false
+                    binding.btnFlashlight.alpha = 0.5f
+                }
             } catch (e: Exception) {
                 Log.e("ScanActivity", "Camera binding failed", e)
             }

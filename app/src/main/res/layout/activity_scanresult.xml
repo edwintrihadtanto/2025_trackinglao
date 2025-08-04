@@ -55,7 +55,7 @@
         android:padding="16dp"
         android:textSize="18sp"
         android:textStyle="bold"
-        android:text="Info lebih lanjut bisa menghubungi\nOperator Layanan Antar Obat\nRSU dr. Soedono Provinsi Jawa Timur "
+        android:text="@string/info_lebih_lanjut"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

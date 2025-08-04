@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Tracking LAO</string>
     <!-- Login page -->
-    <string name="login">Login</string>
+    <string name="login">Login Aplikasi Pelayanan Obat</string>
     <string name="medrec">Nomor Medrec</string>
     <string name="tanggal">Tanggal Lahir</string>
     <string name="resi">Nomor Resi</string>
@@ -12,4 +12,6 @@
     <string name="create_an_account">Create an Account</string>
     <string name="detail">Informasi Obat</string>
     <string name="todo">TODO</string>
+    <string name="scan_qr_code_barcode">Scan QR Code / Barcode</string>
+    <string name="info_lebih_lanjut">Info lebih lanjut bisa menghubungi\nOperator Layanan Antar Obat\nRSU dr. Soedono Provinsi Jawa Timur</string>
 </resources>

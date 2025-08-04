@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
@@ -76,16 +77,20 @@ class LoginActivity : AppCompatActivity() {
         }
 
         binding.loginButton.setOnClickListener {
+            showLoading(true)
             val medrec = binding.medrecEditText.text.toString()
             val tanggal = binding.tanggalEditText.text.toString()
             when {
                 medrec.isEmpty() -> {
                     binding.medrecEditTextLayout.error = "Masukkan No. Medrec"
+                    showLoading(false)
                 }
                 tanggal.isEmpty() -> {
                     binding.tanggalEditTextLayout.error = "Masukkan tanggal lahir"
+                    showLoading(false)
                 }
                 else -> {
+                    showLoading(true)
                     val loginRequest = LoginRequest(medrec, tanggal)
                     val apiService = ApiConfig.getApiService()
                     Log.e("Login Failed", LoginRequest(medrec, tanggal).toString());
@@ -126,6 +131,7 @@ class LoginActivity : AppCompatActivity() {
 
                         override fun onFailure(call: retrofit2.Call<LoginResponse>, t: Throwable) {
     //                        binding.tanggalEditTextLayout.error = "Terjadi kesalahan jaringan"
+                            showLoading(false)
                             Toast.makeText(this@LoginActivity, "Terjadi kesalahan jaringan", Toast.LENGTH_SHORT).show()
                         }
                     })
@@ -137,6 +143,23 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBarLogin.alpha = 0f
+            binding.progressBarLogin.visibility = View.VISIBLE
+            binding.progressBarLogin.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start()
+        } else {
+            binding.progressBarLogin.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
+                    binding.progressBarLogin.visibility = View.GONE
+                }
+                .start()
+        }
+    }
 
 }
