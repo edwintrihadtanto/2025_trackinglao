@@ -25,7 +25,7 @@
             android:name=".ui.scan.ScanResultActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.result.ResultActivity"
+            android:name=".ui.inputresi.InputResiActivity"
             android:exported="true" />
         <activity
             android:name=".ui.main.MainActivity"

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyBottomNavigation"
+rootProject.name = "TrackingLAO"
 include(":app")
  

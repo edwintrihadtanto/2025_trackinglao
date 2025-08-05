@@ -82,6 +82,16 @@
         app:layout_constraintTop_toBottomOf="@+id/tanggalEditTextLayout"
         app:layout_constraintVertical_bias="0.108" />
 
+    <TextView
+        android:id="@+id/appversi"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/versiapp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/gray_text"
+        app:layout_constraintTop_toBottomOf="@+id/loginButton"
+        app:layout_constraintRight_toRightOf="@+id/loginButton"/>
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="211dp"
@@ -91,7 +101,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/iv_login_tracking" />
+        app:srcCompat="@drawable/iv_login_tracking2" />
 
     <ProgressBar
         android:id="@+id/progressBarLogin"

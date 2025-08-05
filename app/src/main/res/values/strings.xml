@@ -2,10 +2,10 @@
     <string name="app_name">Tracking LAO</string>
     <!-- Login page -->
     <string name="login">Login Aplikasi Pelayanan Obat</string>
-    <string name="medrec">Nomor Medrec</string>
-    <string name="tanggal">Tanggal Lahir</string>
-    <string name="resi">Nomor Resi</string>
-    <string name="submit">Submit</string>
+    <string name="medrec">Masukkan Nomor Medrec</string>
+    <string name="tanggal">Masukkan Tanggal Lahir</string>
+    <string name="resi">Masukkan Nomor Resi</string>
+    <string name="submit">Cari</string>
     <string name="forgot_password">Forgot password?</string>
     <string name="google_option">- or with Google -</string>
     <string name="not_registered_yet">Not registered yet?</string>
@@ -15,5 +15,6 @@
     <string name="scan_qr_code_barcode">Scan QR Code / Barcode</string>
     <string name="info_lebih_lanjut">Info lebih lanjut bisa menghubungi\nOperator Layanan Antar Obat\nRSU dr. Soedono Provinsi Jawa Timur</string>
     <string name="judul">Ingin melacak paket obat? \nAyo lacak paket obat disini. </string>
-    <string name="info_main">Tekan salah satu tombol dibawah ini</string>
+    <string name="info_main">Pilih salah satu pelacakan dibawah ini</string>
+    <string name="versiapp">v.1.0 Beta</string>
 </resources>

@@ -5,16 +5,22 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mybottomnavigation.R
+import com.example.mybottomnavigation.data.model.LoginRequest
+import com.example.mybottomnavigation.data.model.LoginResponse
+import com.example.mybottomnavigation.data.network.ApiConfig
 import com.example.mybottomnavigation.databinding.ActivityMainBinding
 import com.example.mybottomnavigation.ui.camera.CameraActivity
 import com.example.mybottomnavigation.ui.login.LoginActivity
-import com.example.mybottomnavigation.ui.result.ResultActivity
+import com.example.mybottomnavigation.ui.inputresi.InputResiActivity
 import com.example.mybottomnavigation.ui.scan.ScanActivity
+import com.example.mybottomnavigation.ui.scan.ScanResultActivity
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 3. Tampilkan sapaan
-        binding.tvWelcome.text = "Halo, $namaPasien\nMedrec: $medrecPasien"
+        binding.tvWelcome.text = "Halo, $namaPasien\nNo. Rekammedis : $medrecPasien"
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -80,13 +86,27 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
-        binding.btnCamera.setOnClickListener {
+        /*binding.btnCamera.setOnClickListener {
             startActivity(Intent(this@MainActivity, CameraActivity::class.java))
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-        }
+        }*/
         binding.btnResi.setOnClickListener {
-            startActivity(Intent(this@MainActivity, ResultActivity::class.java))
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+//            startActivity(Intent(this@MainActivity, InputResiActivity::class.java))
+//            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            val nomorResi = binding.pencarianresi.text.toString()
+            when {
+                nomorResi.isEmpty() -> {
+                    binding.pencarianresiLayout.error = "Nomor Resi Salah"
+                }
+                else -> {
+                    val intent = Intent(this@MainActivity, ScanResultActivity::class.java)
+                    intent.putExtra("scan_result", nomorResi)
+
+                    startActivity(intent)
+                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+//                    finish() // ⬅️ Tutup activity ini setelah redirect
+                }
+            }
         }
         binding.btnLogout.setOnClickListener {
             val sharedPref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE)

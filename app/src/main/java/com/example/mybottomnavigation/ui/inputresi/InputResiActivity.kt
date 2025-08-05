@@ -1,20 +1,21 @@
-package com.example.mybottomnavigation.ui.result
+package com.example.mybottomnavigation.ui.inputresi
 
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
-import com.example.mybottomnavigation.databinding.ActivityResultBinding
+import com.example.mybottomnavigation.databinding.ActivityInputresiBinding
 import com.example.mybottomnavigation.ui.detail.DetailActivity
 
-class ResultActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityResultBinding
+class InputResiActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityInputresiBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityResultBinding.inflate(layoutInflater)
+        binding = ActivityInputresiBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupView()
         setupAction()
@@ -38,7 +39,7 @@ class ResultActivity : AppCompatActivity() {
             val resi = binding.resiEditText.text.toString()
             when {
                 resi.isEmpty() -> {
-                    binding.resiEditTextLayout.error = "Masukkan nomor resi"
+                    binding.resiEditTextLayout.error = "Masukkan nomor resi yang benar dan sesuai"
                 }
                 else -> {
                     val intent = Intent(this, DetailActivity::class.java).also {
@@ -48,6 +49,25 @@ class ResultActivity : AppCompatActivity() {
                     finish()
                 }
             }
+        }
+    }
+
+    private fun showLoading(isLoading: Boolean) {
+        if (isLoading) {
+            binding.progressBarInputResi.alpha = 0f
+            binding.progressBarInputResi.visibility = View.VISIBLE
+            binding.progressBarInputResi.animate()
+                .alpha(1f)
+                .setDuration(300)
+                .start()
+        } else {
+            binding.progressBarInputResi.animate()
+                .alpha(0f)
+                .setDuration(300)
+                .withEndAction {
+                    binding.progressBarInputResi.visibility = View.GONE
+                }
+                .start()
         }
     }
 }
