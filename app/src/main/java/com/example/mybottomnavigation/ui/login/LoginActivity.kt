@@ -1,7 +1,6 @@
 package com.example.mybottomnavigation.ui.login
 
 import android.app.DatePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -12,6 +11,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import com.example.mybottomnavigation.data.model.LoginRequest
 import com.example.mybottomnavigation.data.model.LoginResponse
 import com.example.mybottomnavigation.data.network.ApiConfig
@@ -28,7 +28,20 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.medrecEditText.setText("6465872");
+        val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
+        val namaPasien = sharedPref.getString("NAMA_PASIEN", null)
+        val medrecPasien = sharedPref.getString("MEDREC", null)
+
+        if (namaPasien != null || medrecPasien != null) {
+            Log.d("Login", "Data dibaca dari SharedPreferences: NAMA_PASIEN=$namaPasien, MEDREC=$medrecPasien")
+
+            val intent = Intent(this, MainActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+            return
+        }
+        binding.medrecEditText.setText("6465872")
         binding.tanggalEditText.setText("1992-08-03")
         setupView()
         setupAction()
@@ -52,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
 
         tanggalEditText.setOnClickListener {
             // Menyembunyikan keyboard jika tampil
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(tanggalEditText.windowToken, 0)
 
             val calendar = Calendar.getInstance()
@@ -81,6 +94,10 @@ class LoginActivity : AppCompatActivity() {
             val medrec = binding.medrecEditText.text.toString()
             val tanggal = binding.tanggalEditText.text.toString()
             when {
+                (medrec.length != 7) ->{
+                    binding.medrecEditTextLayout.error = "Medrec Hanya 7 Karakter"
+                    showLoading(false)
+                }
                 medrec.isEmpty() -> {
                     binding.medrecEditTextLayout.error = "Masukkan No. Medrec"
                     showLoading(false)
@@ -93,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
                     showLoading(true)
                     val loginRequest = LoginRequest(medrec, tanggal)
                     val apiService = ApiConfig.getApiService()
-                    Log.e("Login Failed", LoginRequest(medrec, tanggal).toString());
+                    Log.e("Login Failed", LoginRequest(medrec, tanggal).toString())
 
                     apiService.login(loginRequest).enqueue(object : retrofit2.Callback<LoginResponse> {
                         override fun onResponse(
@@ -101,20 +118,22 @@ class LoginActivity : AppCompatActivity() {
                             response: retrofit2.Response<LoginResponse>
                         ) {
                             if (response.isSuccessful && response.body()?.success == true) {
-                                val namaPasien = response.body()?.data?.nama
-                                val medrecPasien = response.body()?.data?.medrec
-
-    //                            val intent = Intent(this@LoginActivity, MainActivity::class.java)
-    //                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-    //                            startActivity(intent)
-    //                            finish()
+                                val namaPasien      = response.body()?.data?.nama
+                                val medrecPasien    = response.body()?.data?.medrec
+                                val tgllahirPasien  = response.body()?.data?.tgllahir
+                                val versiapk        = response.body()?.data?.versiapk
 
                                 // SIMPAN KE SHARED PREFERENCES
-                                val sharedPref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE)
-                                sharedPref.edit()
-                                    .putString("NAMA_PASIEN", namaPasien)
-                                    .putString("MEDREC", medrecPasien)
-                                    .apply()
+                                val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
+                                sharedPref.edit {
+                                    putString("NAMA_PASIEN", namaPasien)
+                                    putString("MEDREC", medrecPasien)
+                                    putString("TGLLAHIR", tgllahirPasien)
+                                    putString("VERSIAPK", versiapk)
+                                    apply() // Gunakan apply() untuk menyimpan data secara asinkron
+                                }
+                                // Cek apakah data tersimpan dengan benar
+                                Log.d("LoginActivity", "Data disimpan ke SharedPreferences: NAMA_PASIEN=$namaPasien, MEDREC=$medrecPasien")
 
                                 // Lanjut ke MainActivity
                                 val intent = Intent(this@LoginActivity, MainActivity::class.java)
@@ -136,8 +155,6 @@ class LoginActivity : AppCompatActivity() {
                         }
                     })
                     Log.d("Login Success", loginRequest.toString())
-
-
                 }
             }
         }

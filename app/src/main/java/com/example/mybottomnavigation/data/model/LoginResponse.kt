@@ -9,5 +9,7 @@ data class LoginResponse(
 
 data class UserData(
     val nama: String,
-    val medrec: String
+    val medrec: String,
+    val tgllahir: String,
+    val versiapk: String
 )

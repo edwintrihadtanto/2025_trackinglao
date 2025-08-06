@@ -1,50 +1,49 @@
 package com.example.mybottomnavigation.ui.main
 
 import android.Manifest
-import android.content.Context
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.mybottomnavigation.R
-import com.example.mybottomnavigation.data.model.LoginRequest
-import com.example.mybottomnavigation.data.model.LoginResponse
-import com.example.mybottomnavigation.data.network.ApiConfig
 import com.example.mybottomnavigation.databinding.ActivityMainBinding
-import com.example.mybottomnavigation.ui.camera.CameraActivity
 import com.example.mybottomnavigation.ui.login.LoginActivity
-import com.example.mybottomnavigation.ui.inputresi.InputResiActivity
 import com.example.mybottomnavigation.ui.scan.ScanActivity
 import com.example.mybottomnavigation.ui.scan.ScanResultActivity
+import androidx.core.content.edit
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val CAMERA_X_RESULT = 200
-
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
         private const val REQUEST_CODE_PERMISSIONS = 10
     }
 
     private lateinit var binding: ActivityMainBinding
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         // 1. Ambil nama dan medrec dari SharedPreferences
-        val sharedPref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE)
+        val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
         val namaPasien = sharedPref.getString("NAMA_PASIEN", null)
         val medrecPasien = sharedPref.getString("MEDREC", null)
-
+        val tgllahirPasien = sharedPref.getString("TGLLAHIR", null)
+        val versiAPK = sharedPref.getString("VERSIAPK", null)
+        Log.d("SharedPreferences", "Nama Pasien: $namaPasien, Medrec Pasien: $medrecPasien")
         // 2. Kalau belum login, kembali ke LoginActivity
         if (namaPasien == null || medrecPasien == null) {
+            Log.d("MainActivity", "Data dibaca dari SharedPreferences: NAMA_PASIEN=$namaPasien, MEDREC=$medrecPasien")
+
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
@@ -53,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         // 3. Tampilkan sapaan
-        binding.tvWelcome.text = "Halo, $namaPasien\nNo. Rekammedis : $medrecPasien"
+        binding.tvWelcome.text = "No. Medrec : $medrecPasien\nTgl. Lahir : $tgllahirPasien\nHalo, $namaPasien"
 
         if (!allPermissionsGranted()) {
             ActivityCompat.requestPermissions(
@@ -78,6 +77,7 @@ class MainActivity : AppCompatActivity() {
         ContextCompat.checkSelfPermission(baseContext, it) == PackageManager.PERMISSION_GRANTED
     }
 
+    @Suppress("DEPRECATION")
     private fun setupAction() {
         binding.btnScan.setOnClickListener {
 //            startActivity(Intent(this@MainActivity, ScanActivity::class.java))
@@ -91,8 +91,6 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }*/
         binding.btnResi.setOnClickListener {
-//            startActivity(Intent(this@MainActivity, InputResiActivity::class.java))
-//            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             val nomorResi = binding.pencarianresi.text.toString()
             when {
                 nomorResi.isEmpty() -> {
@@ -109,9 +107,24 @@ class MainActivity : AppCompatActivity() {
             }
         }
         binding.btnLogout.setOnClickListener {
-            val sharedPref = getSharedPreferences("APP_PREF", Context.MODE_PRIVATE)
-            sharedPref.edit().clear().apply()
+            val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
+            sharedPref.edit { clear() } // Ini akan menghapus semua data login
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+            startActivity(intent)
+            finish()
+        }
+    }
 
+    override fun onResume() {
+        super.onResume()
+
+        val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
+        val namaPasien = sharedPref.getString("NAMA_PASIEN", null)
+        val medrecPasien = sharedPref.getString("MEDREC", null)
+
+        if (namaPasien == null || medrecPasien == null) {
+            Log.d("MainActivity", "Data tidak ditemukan, kembali ke LoginActivity")
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
