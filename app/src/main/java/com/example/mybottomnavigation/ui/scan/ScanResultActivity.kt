@@ -1,7 +1,11 @@
 package com.example.mybottomnavigation.ui.scan
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.Context
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -18,6 +22,7 @@ class ScanResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScanresultBinding
 //    private var medrec: String? = null
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityScanresultBinding.inflate(layoutInflater)
@@ -39,12 +44,14 @@ class ScanResultActivity : AppCompatActivity() {
             Toast.makeText(this, "Tidak ada koneksi internet.", Toast.LENGTH_SHORT).show()
             return
         }
+
         showLoading(true)
         val request = ScanResultRequest(kode_scan = kode, medrec)
         Log.e("ResultScan", request.toString())
 
         ApiConfig.getApiService().kirimScanResult(request)
             .enqueue(object : retrofit2.Callback<ScanResultResponse> {
+                @SuppressLint("SetTextI18n")
                 override fun onResponse(
                     call: Call<ScanResultResponse>,
                     response: retrofit2.Response<ScanResultResponse>
@@ -159,10 +166,28 @@ class ScanResultActivity : AppCompatActivity() {
             .start()
     }
 
-    private fun isNetworkAvailable(): Boolean {
+    /*private fun isNetworkAvailable(): Boolean {
         val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnected
+    }*/
+
+    fun Context.isNetworkAvailable(): Boolean {
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            val network = connectivityManager.activeNetwork ?: return false
+            val capabilities = connectivityManager.getNetworkCapabilities(network) ?: return false
+
+            return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                    capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+        } else {
+            // Untuk Android versi lama
+            @Suppress("DEPRECATION")
+            val networkInfo = connectivityManager.activeNetworkInfo
+            @Suppress("DEPRECATION")
+            return networkInfo != null && networkInfo.isConnected
+        }
     }
 
     fun parseError(response: retrofit2.Response<*>): ScanResultResponse {

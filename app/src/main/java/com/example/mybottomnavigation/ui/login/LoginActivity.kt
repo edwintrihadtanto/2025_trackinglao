@@ -47,6 +47,9 @@ class LoginActivity : AppCompatActivity() {
         }
 //        binding.medrecEditText.setText("6465872")
 //        binding.tanggalEditText.setText("1992-08-03")
+        val paInfo = packageManager.getPackageInfo(packageName, 0)
+        val versionName = paInfo.versionName
+        binding.appversi.text = versionName
         setupView()
         setupAction()
     }
