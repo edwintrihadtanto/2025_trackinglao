@@ -22,12 +22,16 @@ import java.util.Calendar
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    private var versionName: String? = null
 //    private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val pInfo = packageManager.getPackageInfo(packageName, 0)
+        versionName = pInfo.versionName
+
         val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
         val namaPasien = sharedPref.getString("NAMA_PASIEN", null)
         val medrecPasien = sharedPref.getString("MEDREC", null)
@@ -41,8 +45,8 @@ class LoginActivity : AppCompatActivity() {
             finish()
             return
         }
-        binding.medrecEditText.setText("6465872")
-        binding.tanggalEditText.setText("1992-08-03")
+//        binding.medrecEditText.setText("6465872")
+//        binding.tanggalEditText.setText("1992-08-03")
         setupView()
         setupAction()
     }
@@ -108,9 +112,9 @@ class LoginActivity : AppCompatActivity() {
                 }
                 else -> {
                     showLoading(true)
-                    val loginRequest = LoginRequest(medrec, tanggal)
+                    val loginRequest = LoginRequest(medrec, tanggal, versionName?: "")
                     val apiService = ApiConfig.getApiService()
-                    Log.e("Login Failed", LoginRequest(medrec, tanggal).toString())
+                    Log.e("Login Failed", LoginRequest(medrec, tanggal, versionName?: "").toString())
 
                     apiService.login(loginRequest).enqueue(object : retrofit2.Callback<LoginResponse> {
                         override fun onResponse(
@@ -141,9 +145,9 @@ class LoginActivity : AppCompatActivity() {
                                 finish()
                             } else {
     //                            binding.tanggalEditTextLayout.error = "Login gagal: ${response.body()?.message}"
-                                // Login gagal, tampilkan Toast
-                                val errorMessage = response.body()?.message ?: "Login gagal : "
+                                val errorMessage = response.body()?.message ?: "Login gagal : Failed Respon BackEnd!"
                                 Toast.makeText(this@LoginActivity, errorMessage, Toast.LENGTH_SHORT).show()
+                                showLoading(false)
                             }
                             Log.d("LoginResponse", response.body().toString())
                         }

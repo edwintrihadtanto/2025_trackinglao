@@ -5,11 +5,14 @@ data class ScanResultData(
     val nama_pasien: String,
     val nama_unit: String,
     val status_obat: String,
-    val jam_daftar: String
+    val jam_daftar: String,
+    val tgl_kunj: String,
+    val info: String
 )
-
 data class ScanResultResponse(
     val success: Boolean,
     val message: String,
-    val data: ScanResultData?
+    val option: Int,
+    val data: ScanResultData?,
+    val html: String,
 )

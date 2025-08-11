@@ -1,10 +1,10 @@
 package com.example.mybottomnavigation.ui.scan
 
 import android.app.AlertDialog
-import android.content.Context
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +16,7 @@ import retrofit2.Call
 
 class ScanResultActivity : AppCompatActivity() {
     private lateinit var binding: ActivityScanresultBinding
+//    private var medrec: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,23 +25,23 @@ class ScanResultActivity : AppCompatActivity() {
 
         // Sembunyikan action bar (jika perlu)
         supportActionBar?.hide()
-
+        val medrec = intent.getStringExtra("medrec_key") ?: "0"
         // Ambil hasil scan dari intent
         val resultText = intent.getStringExtra("scan_result") ?: "Tidak ada hasil"
 //        binding.tvResult.text = resultText
         binding.tvResult.text = "Sedang Memproses data: $resultText"
 
-        kirimHasilScan(resultText)
+        kirimHasilScan(resultText, medrec)
     }
 
-    private fun kirimHasilScan(kode: String) {
+    private fun kirimHasilScan(kode: String, medrec: String) {
         if (!isNetworkAvailable()) {
             Toast.makeText(this, "Tidak ada koneksi internet.", Toast.LENGTH_SHORT).show()
             return
         }
         showLoading(true)
-        val request = ScanResultRequest(kode_scan = kode)
-        Log.e("ResultScan", request.toString());
+        val request = ScanResultRequest(kode_scan = kode, medrec)
+        Log.e("ResultScan", request.toString())
 
         ApiConfig.getApiService().kirimScanResult(request)
             .enqueue(object : retrofit2.Callback<ScanResultResponse> {
@@ -56,15 +57,25 @@ class ScanResultActivity : AppCompatActivity() {
                             Toast.LENGTH_SHORT
                         ).show()
                         if (res?.success == true) {
-                            val pasien = res?.data
+                            val pasien = res.data
+                            val option      = response.body()?.option
                             val displayText = """
                                ✅ Scan Berhasil
-                               Kode Scan   : ${pasien?.kode_scan ?: "-"}
+                               Tgl Kunjung : ${pasien?.tgl_kunj ?: "-"}
+                               No. Rekammedis : ${pasien?.kode_scan ?: "-"}
                                Nama Pasien : ${pasien?.nama_pasien ?: "-"}
                                Nama Unit : ${pasien?.nama_unit ?: "-"}
-                               Jam Daftar Pengantaran : ${pasien?.jam_daftar ?: "-"}
-                               Status Pengantaran : ${pasien?.status_obat ?: "-"}""".trimIndent()
-                            animateResultText(displayText)
+                               Waktu Pengantaran : ${pasien?.jam_daftar ?: "-"}
+                               Status Pengantaran : ${pasien?.status_obat ?: "-"}
+                               ${pasien?.info ?: ""}""".trimIndent()
+                            val html = response.body()?.html
+                            val displayTextHTML = """
+                               ${html?.ifBlank { "<div style='text-align:left;'>-</div>" }}""".trimIndent()
+                            if (option == 1){
+                                animateResultText(displayText)
+                            }else{
+                                animateResultText(displayTextHTML)
+                            }
 //                            binding.tvResult.text = displayText
 
                             // Tampilkan dialog konfirmasi
@@ -74,7 +85,7 @@ class ScanResultActivity : AppCompatActivity() {
                                 .setPositiveButton("Scan Lagi") { _, _ ->
                                     finish() // Kembali ke activity scan sebelumnya
                                 }
-                                .setNegativeButton("OK", null)
+                                .setNegativeButton("Tidak", null)
                                 .show()
                         }else{
                             val displayText = """ 
@@ -140,6 +151,7 @@ class ScanResultActivity : AppCompatActivity() {
         binding.tvResult.translationY = 100f
         binding.tvResult.alpha = 0f
         binding.tvResult.text = displayText
+        binding.tvResult.gravity = Gravity.CENTER
         binding.tvResult.animate()
             .translationY(0f)
             .alpha(1f)
@@ -148,8 +160,20 @@ class ScanResultActivity : AppCompatActivity() {
     }
 
     private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = connectivityManager.activeNetworkInfo
         return activeNetwork != null && activeNetwork.isConnected
+    }
+
+    fun parseError(response: retrofit2.Response<*>): ScanResultResponse {
+        return try {
+            val converter = ApiConfig.getRetrofit()
+                .responseBodyConverter<ScanResultResponse>(ScanResultResponse::class.java, arrayOf())
+            response.errorBody()?.let {
+                converter.convert(it)
+            } ?: ScanResultResponse(false, "Unknown error", 0, null, "HTML")
+        } catch (_: Exception) {
+            ScanResultResponse(false, "Gagal Load BackEnd!", 0, null, "HTML")
+        }
     }
 }

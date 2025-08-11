@@ -34,7 +34,7 @@ class ScanActivity : AppCompatActivity() {
     private var alreadyRedirected = false
     private var isFlashOn = false
     private var camera: Camera? = null
-
+    private var medrec: String? = null
     private val cameraPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
@@ -51,6 +51,7 @@ class ScanActivity : AppCompatActivity() {
 
         mediaPlayer = MediaPlayer.create(this, R.raw.beep)
         cameraExecutor = Executors.newSingleThreadExecutor()
+        medrec = intent.getStringExtra("medrec_key") // baca data medrec dari Intent
 
         // Minta izin kamera
         cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
@@ -179,6 +180,7 @@ class ScanActivity : AppCompatActivity() {
                                 mediaPlayer?.start()
                                 val intent = Intent(this@ScanActivity, ScanResultActivity::class.java)
                                 intent.putExtra("scan_result", rawValue)
+                                intent.putExtra("medrec_key", medrec)
                                 startActivity(intent)
                                 finish() // ⬅️ Tutup activity ini setelah redirect
                             }
