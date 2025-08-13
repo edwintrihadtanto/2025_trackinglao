@@ -29,8 +29,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        val pInfo = packageManager.getPackageInfo(packageName, 0)
-        versionName = pInfo.versionName
 
         val sharedPref = getSharedPreferences("APP_PREF", MODE_PRIVATE)
         val namaPasien = sharedPref.getString("NAMA_PASIEN", null)
