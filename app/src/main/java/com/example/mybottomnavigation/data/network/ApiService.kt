@@ -22,4 +22,6 @@ interface ApiService {
 //    @POST("actlog/data/scanresult")
     @POST("scanresult")
     fun kirimScanResult(@Body request: ScanResultRequest): Call<ScanResultResponse>
+    @POST("infopengiriman")
+    fun infopengiriman(@Body request: ScanResultRequest): Call<ScanResultResponse>
 }
