@@ -13,11 +13,12 @@
     <string name="detail">Informasi Obat</string>
     <string name="todo">TODO</string>
     <string name="scan_qr_code_barcode">Scan QR Code / Barcode</string>
-    <string name="info_lebih_lanjut">Info lebih lanjut bisa menghubungi\nOperator Layanan Antar Obat\nRSU dr. Soedono Provinsi Jawa Timur</string>
+    <string name="info_lebih_lanjut">Info lebih lanjut bisa menghubungi Operator Layanan Antar Obat RSU dr. Soedono Provinsi Jawa Timur</string>
     <string name="judul">Ingin tau status pengantaran obat?\nAyo cek status pengantaran obat anda disini</string>
     <string name="info_main">Pilih salah satu pelacakan dibawah ini</string>
     <string name="versiapp">v.1.0 Beta</string>
     <string name="login_button">Login</string>
     <string name="designed_by_itisi">Designed by ITISI\nRSU dr. Soedono Prov. Jawa Timur</string>
     <string name="atau_bisa_menggunakan_scanner">atau bisa menggunakan scanner</string>
+    <string name="info_pengantaran">*)Apabila obat belum datang sampai Jam 9 Malam, maka obat akan diantar Besok Pagi</string>
 </resources>

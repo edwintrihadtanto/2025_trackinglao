@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/img_scanresult"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_marginTop="50dp"
         android:contentDescription="@string/todo"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,14 +45,26 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
+        android:id="@+id/tv_scanresult_infodua"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/orange_button_text"
+        android:textColor="#000000"
+        android:gravity="start"
+        android:padding="5dp"
+        android:textSize="15sp"
+        android:text="@string/info_pengantaran"
+        app:layout_constraintBottom_toTopOf="@+id/tv_scanresult_info" />
+
+    <TextView
         android:id="@+id/tv_scanresult_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/blue_button_text"
         android:textColor="#FFFFFF"
         android:gravity="start"
-        android:padding="16dp"
-        android:textSize="18sp"
+        android:padding="5dp"
+        android:textSize="15sp"
         android:text="@string/info_lebih_lanjut"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
