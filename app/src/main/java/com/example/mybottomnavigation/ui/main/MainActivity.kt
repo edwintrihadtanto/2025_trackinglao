@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -20,6 +21,8 @@ import com.example.mybottomnavigation.databinding.ActivityMainBinding
 import com.example.mybottomnavigation.ui.login.LoginActivity
 import com.example.mybottomnavigation.ui.scan.ScanActivity
 import com.example.mybottomnavigation.ui.scan.ScanResultActivity
+import androidx.core.net.toUri
+import com.example.mybottomnavigation.data.model.VersiAPKResponse
 
 class MainActivity : AppCompatActivity() {
 
@@ -55,19 +58,19 @@ class MainActivity : AppCompatActivity() {
             finish()
             return
         }
+        /*
         val pInfo = packageManager.getPackageInfo(packageName, 0)
         val versionName = pInfo.versionName
 
         if (versionName != versiAPK){
             AlertDialog.Builder(this@MainActivity)
                 .setCancelable(false)
-                .setTitle("Info!")
-                .setMessage("Versi terbaru Tracking Obat tersedia, Silahkan download / update aplikasi terbaru?")
+                .setTitle("Update Tersedia")
+                .setMessage("Versi terbaru Tracking Obat $versiAPK telah tersedia, Silahkan download dan perbarui aplikasi!")
                 .setPositiveButton("Terima Kasih") { _, _ ->
                     val logoutRequest = LogoutRequest(medrec ?: "")
                     val apiService = ApiConfig.getApiService()
                     Log.e("Logout Request", logoutRequest.toString())
-
                     apiService.logout(logoutRequest).enqueue(object : retrofit2.Callback<LogoutResponse> {
                         override fun onResponse(
                             call: retrofit2.Call<LogoutResponse>,
@@ -91,9 +94,9 @@ class MainActivity : AppCompatActivity() {
                                     parseError(response) // <-- ambil pesan dari errorBody
                                 }
                                 Toast.makeText(this@MainActivity, logoutResponse?.message ?: "Logout gagal! Gagal Load BackEnd!", Toast.LENGTH_SHORT).show()
-                                /*val errorMessage =
-                                    response.body()?.message ?: "Logout gagal! Gagal Load BackEnd!"
-                                Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_SHORT).show()*/
+//                                val errorMessage =
+//                                    response.body()?.message ?: "Logout gagal! Gagal Load BackEnd!"
+//                                Toast.makeText(this@MainActivity, errorMessage, Toast.LENGTH_SHORT).show()
                             }
                         }
 
@@ -106,9 +109,13 @@ class MainActivity : AppCompatActivity() {
                         }
                     })
                 }
-                //.setNegativeButton("Batal", null)
+                .setNegativeButton("Link Download") { _, _ ->
+                    val url = "https://rssoedono.jatimprov.go.id/utama/aplikasi-tacking-obat/"
+                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                    startActivity(intent)
+                }
                 .show()
-        }
+        }*/
 
         // 3. Tampilkan sapaan
         binding.tvWelcome.text = "No. Medrec : $medrec\nTgl. Lahir : $tgllahirPasien\nHalo, $namaPasien"
@@ -122,6 +129,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         setupAction()
+        cekVersiAPK()
         supportActionBar?.hide()
     }
 
@@ -281,8 +289,94 @@ class MainActivity : AppCompatActivity() {
             response.errorBody()?.let {
                 converter.convert(it)
             } ?: LogoutResponse(false, "Unknown error")
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             LogoutResponse(false, "Gagal Load BackEnd!")
         }
     }
+
+    private fun cekVersiAPK() {
+        val pInfo = packageManager.getPackageInfo(packageName, 0)
+        val versiPerangkat = pInfo.versionName
+
+        val apiService = ApiConfig.getApiService()
+        apiService.cekversiterbaru().enqueue(object : retrofit2.Callback<VersiAPKResponse> {
+            override fun onResponse(
+                call: retrofit2.Call<VersiAPKResponse>,
+                response: retrofit2.Response<VersiAPKResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val versiResponse = response.body()
+
+                    if (versiResponse != null) {
+                        // misal server kirim versi terbaru dalam field versi_apk
+                        val versiTerbaru = versiResponse.versi_apk
+                        val pesanVersi = versiResponse.pesan_versi
+
+                        if (versiTerbaru != null && versiTerbaru != versiPerangkat) {
+                            // Tampilkan AlertDialog untuk update
+                            AlertDialog.Builder(this@MainActivity)
+                                .setCancelable(false)
+                                .setTitle("Update Tersedia")
+//                                .setMessage("Versi terbaru $versiTerbaru sudah tersedia. Versi perangkat kamu $versiPerangkat. Silakan update aplikasi.")
+                                .setMessage("Versi terbaru Tracking Obat $versiTerbaru telah tersedia, Silahkan download dan perbarui aplikasi! $pesanVersi")
+                                .setPositiveButton("Download") { _, _ ->
+                                    val url = versiResponse.link_download ?: "https://rssoedono.jatimprov.go.id/utama/"
+                                    val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                                    startActivity(intent)
+                                }
+                                .setNeutralButton("Keluar") { _, _ ->
+                                    val logoutRequest = LogoutRequest(medrec ?: "")
+                                    val apiService = ApiConfig.getApiService()
+                                    Log.e("Logout Request", logoutRequest.toString())
+                                    apiService.logout(logoutRequest).enqueue(object : retrofit2.Callback<LogoutResponse> {
+                                        override fun onResponse(
+                                            call: retrofit2.Call<LogoutResponse>,
+                                            response: retrofit2.Response<LogoutResponse>
+                                        ) {
+                                            if (response.isSuccessful && response.body()?.success == true) {
+                                                Toast.makeText(this@MainActivity, response.body()?.message, Toast.LENGTH_SHORT).show()
+                                                // Hapus data login dari SharedPreferences
+                                                getSharedPreferences("APP_PREF", MODE_PRIVATE).edit { clear() }
+
+                                                // Pindah ke LoginActivity
+                                                val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                                                intent.flags =
+                                                    Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+                                                startActivity(intent)
+                                                finish()
+                                            } else {
+                                                val logoutResponse = if (response.isSuccessful) {
+                                                    response.body()
+                                                } else {
+                                                    parseError(response) // <-- ambil pesan dari errorBody
+                                                }
+                                                Toast.makeText(this@MainActivity, logoutResponse?.message ?: "Logout gagal! Gagal Load BackEnd!", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+
+                                        override fun onFailure(call: retrofit2.Call<LogoutResponse>, t: Throwable) {
+                                            Toast.makeText(
+                                                this@MainActivity,
+                                                "Terjadi kesalahan jaringan",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    })
+                                }
+                                .setNegativeButton("Nanti") { dialog, _ -> dialog.dismiss() }
+                                .show()
+                        }
+                    }
+                } else {
+                    Toast.makeText(this@MainActivity, "Gagal cek versi terbaru", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: retrofit2.Call<VersiAPKResponse>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Terjadi kesalahan jaringan", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
 }

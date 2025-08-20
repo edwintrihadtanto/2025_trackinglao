@@ -7,6 +7,7 @@ data class ScanResultData(
     val status_obat: String,
     val jam_daftar: String,
     val tgl_kunj: String,
+    val driver: String,
     val info: String
 )
 data class ScanResultResponse(

@@ -5,8 +5,10 @@ import com.example.mybottomnavigation.data.model.LogoutRequest
 import com.example.mybottomnavigation.data.model.LogoutResponse
 import com.example.mybottomnavigation.data.model.ScanResultRequest
 import com.example.mybottomnavigation.data.model.ScanResultResponse
+import com.example.mybottomnavigation.data.model.VersiAPKResponse
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
 
@@ -24,4 +26,8 @@ interface ApiService {
     fun kirimScanResult(@Body request: ScanResultRequest): Call<ScanResultResponse>
     @POST("infopengiriman")
     fun infopengiriman(@Body request: ScanResultRequest): Call<ScanResultResponse>
+
+    @Headers("Content-Type: application/json")
+    @GET("cekversiterbaru")
+    fun cekversiterbaru(): Call<VersiAPKResponse>
 }

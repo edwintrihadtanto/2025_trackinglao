@@ -34,7 +34,9 @@ class ScanResultActivity : AppCompatActivity() {
         // Ambil hasil scan dari intent
         val resultText = intent.getStringExtra("scan_result") ?: "Tidak ada hasil"
 //        binding.tvResult.text = resultText
-        binding.tvResult.text = "Sedang Memproses data: $resultText"
+        binding.tvResult.visibility = View.GONE
+        binding.tvResulthtml.visibility = View.VISIBLE
+        binding.tvResulthtml.text = "Sedang Memproses data: $resultText"
 
         kirimHasilScan(resultText, medrec)
     }
@@ -66,7 +68,7 @@ class ScanResultActivity : AppCompatActivity() {
                         if (res?.success == true) {
                             val pasien = res.data
                             val option      = response.body()?.option
-                            val displayText = """
+                            /*val displayText = """
                                ✅ Scan Berhasil
                                Tgl Kunjung : ${pasien?.tgl_kunj ?: "-"}
                                No. Rekammedis : ${pasien?.kode_scan ?: "-"}
@@ -74,14 +76,28 @@ class ScanResultActivity : AppCompatActivity() {
                                Nama Unit : ${pasien?.nama_unit ?: "-"}
                                Waktu Pengantaran : ${pasien?.jam_daftar ?: "-"}
                                Status Pengantaran : ${pasien?.status_obat ?: "-"}
-                               ${pasien?.info ?: ""}""".trimIndent()
-                            val html = response.body()?.html
-                            val displayTextHTML = """
-                               ${html?.ifBlank { "<div style='text-align:left;'>-</div>" }}""".trimIndent()
+                               ${pasien?.info ?: ""}""".trimIndent()*/
+
                             if (option == 1){
-                                animateResultText(displayText)
+
+                                binding.labelBerhasilatautidak.text = "✅ Scan Berhasil"
+                                binding.valueTglKunjung.text = pasien?.tgl_kunj ?: "-"
+                                binding.valueNoMedrec.text = pasien?.kode_scan ?: "-"
+                                binding.valueNamaPasien.text = pasien?.nama_pasien ?: "-"
+                                binding.valueNamaUnit.text = pasien?.nama_unit ?: "-"
+                                binding.valueWaktuPengantaran.text = pasien?.jam_daftar ?: "-"
+                                binding.valueStatusPengantaran.text = pasien?.status_obat ?: "-"
+
+                                binding.tvResulthtml.visibility = View.GONE
+                                binding.tvResult.visibility = View.VISIBLE
+                                animateResultTextOpsiSatu()
                             }else{
-                                animateResultText(displayTextHTML)
+                                val html = response.body()?.html
+                                val displayTextHTML = """
+                                ${html?.ifBlank { "<div style='text-align:left;'>-</div>" }}""".trimIndent()
+                                binding.tvResulthtml.visibility = View.VISIBLE
+                                binding.tvResult.visibility = View.GONE
+                                animateResultTextHTML(displayTextHTML)
                             }
 //                            binding.tvResult.text = displayText
 
@@ -89,20 +105,22 @@ class ScanResultActivity : AppCompatActivity() {
                             AlertDialog.Builder(this@ScanResultActivity)
                                 .setTitle("Konfirmasi")
                                 .setMessage("Data pasien berhasil ditemukan.\nIngin melakukan scan lagi?")
-                                .setPositiveButton("Scan Lagi") { _, _ ->
+                                .setPositiveButton("Scan Ulang") { _, _ ->
                                     finish() // Kembali ke activity scan sebelumnya
                                 }
-                                .setNegativeButton("Tidak", null)
+                                .setNeutralButton("Tidak", null)
                                 .show()
                         }else{
                             val displayText = """ 
                                 ❌ ${res?.message ?: "Gagal mengambil data"} """.trimIndent()
-                            animateResultText(displayText)
+                            binding.tvResult.visibility = View.GONE
+                            binding.tvResulthtml.visibility = View.VISIBLE
+                            animateResultTextHTML(displayText)
 //                            binding.tvResult.text = displayText
                         }
 
                     } else {
-                        binding.tvResult.text = "❌ Gagal kirim scan. Code: ${response.code()}"
+                        binding.labelBerhasilatautidak.text = "❌ Gagal kirim scan. Code: ${response.code()}"
                         /*Toast.makeText(
                             this@ScanResultActivity,
                             "Gagal kirim scan. Code: ${response.code()}",
@@ -154,11 +172,20 @@ class ScanResultActivity : AppCompatActivity() {
         }
     }
 
-    private fun animateResultText(displayText: String) {
+    private fun animateResultTextHTML(displayText: String) {
+        binding.tvResulthtml.translationY = 100f
+        binding.tvResulthtml.alpha = 0f
+        binding.tvResulthtml.text = displayText
+        binding.tvResulthtml.animate()
+            .translationY(0f)
+            .alpha(1f)
+            .setDuration(500)
+            .start()
+    }
+
+    private fun animateResultTextOpsiSatu() {
         binding.tvResult.translationY = 100f
         binding.tvResult.alpha = 0f
-        binding.tvResult.text = displayText
-        binding.tvResult.gravity = Gravity.CENTER
         binding.tvResult.animate()
             .translationY(0f)
             .alpha(1f)

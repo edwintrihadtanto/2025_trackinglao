@@ -12,7 +12,7 @@
         android:id="@+id/img_scanresult"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="20dp"
         android:contentDescription="@string/todo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -21,7 +21,7 @@
         app:srcCompat="@drawable/iv_logo" />
 
     <TextView
-        android:id="@+id/tvResult"
+        android:id="@+id/tvResulthtml"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/blue_button_text"
@@ -29,10 +29,163 @@
         android:padding="16dp"
         android:textSize="20sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/tvResult"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:background="@drawable/bg_result_scan"
+        android:gravity="left"
+        android:paddingLeft="10dp"
+        android:paddingTop="30dp"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@+id/img_scanresult"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/tv_scanresult_infodua"
+        app:layout_constraintVertical_bias="0.0">
+        >
+
+        <!-- Tanggal Kunjung -->
+        <TextView
+            android:id="@+id/label_berhasilatautidak"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="✅ Scan Berhasil"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:textSize="25sp" />
+        <!-- Tanggal Kunjung -->
+        <TextView
+            android:id="@+id/label_tgl_kunjung"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tanggal Kunjung:"
+            android:layout_marginTop="10dp"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value_tgl_kunjung"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="2028-08-08"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingTop="5dp"
+            android:paddingStart="15dp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- No. Medrec -->
+        <TextView
+            android:id="@+id/label_no_medrec"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No. Medrec:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value_no_medrec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="6-74-04-65"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingStart="15dp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"
+            tools:ignore="RtlSymmetry" />
+
+        <!-- Nama Pasien -->
+        <TextView
+            android:id="@+id/label_nama_pasien"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Pasien:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value_nama_pasien"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SUDJONO, TN"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingStart="15dp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Nama Unit -->
+        <TextView
+            android:id="@+id/label_nama_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nama Unit:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value_nama_unit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="JANTUNG"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingStart="15dp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Waktu Pengantaran -->
+        <TextView
+            android:id="@+id/label_waktu_pengantaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Waktu Pengantaran:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value_waktu_pengantaran"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="19:36:00"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingStart="15dp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- Status Pengantaran -->
+        <TextView
+            android:id="@+id/label_status_pengantaran"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status Pengantaran:"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/value_status_pengantaran"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sedang dalam proses persiapan pengantaran obat"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:paddingStart="15dp"
+            android:textSize="20sp"
+            android:layout_marginBottom="8dp"
+            tools:ignore="RtlSymmetry" />
+
+    </LinearLayout>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -60,8 +213,8 @@
         android:id="@+id/tv_scanresult_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/blue_button_text"
-        android:textColor="#FFFFFF"
+        android:background="@color/orange_button_text"
+        android:textColor="#000000"
         android:gravity="start"
         android:padding="5dp"
         android:textSize="15sp"
